@@ -14,3 +14,5 @@
  Posibles mejoras generales:
   - hacknet.js compra la mejora más barata o un nodo nuevo, lo que sea más barato; y hasta el infinito. Es posible que sea mejor añadir un limite de nodos y que las compras vayan en función de lo que más beneficio de.
   - Crear un archivo de compraventa de acciones.
+  - Hacer hackeos en home y en el servidor a hackear, en este segundo caso sin el weaken de por medio.
+  - Crear un archivo de autocompra de servidores y ejecutar los mismos codigos que home.
