@@ -37,7 +37,7 @@ export async function main(ns) {
 				servis.push(serTemp[n]);
 				isNuked.push(ns.hasRootAccess(serTemp[n]));
 				numPorts.push(ns.getServerNumPortsRequired(serTemp[n]));
-				if (ns.getServerSecurityLevel == 0 && ns.getServerMoneyAvailable == 0) {
+				if (ns.getServerSecurityLevel(serTemp[n]) == 0 && ns.getServerMoneyAvailable(serTemp[n]) == 0) {
 					isFaction.push(true);
 				} else {
 					isFaction.push(false);
