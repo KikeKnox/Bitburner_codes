@@ -11,6 +11,8 @@
   - servermasmas.js: Script que compra servidores nuevos y hasta el máximo disponible.
  
  V01: init.js puede limpiarse de algunas cosas que ya no son necesarias pero que quedaron como restos de antiguas funciones.
+ V04: Es necesario aunar los nukeos de init.js con los backdoors. Posiblemente sea mejor hacer un archivo exclusivo para todo lo que tiene que ver con atacar servers.
+ 
  
  Posibles mejoras generales:
   - hacknet.js compra la mejora más barata o un nodo nuevo, lo que sea más barato; y hasta el infinito. Es posible que sea mejor añadir un limite de nodos y que las compras vayan en función de lo que más beneficio de.
