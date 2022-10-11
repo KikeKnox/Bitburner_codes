@@ -9,12 +9,11 @@ export async function main(ns) {
 
     //PROGRAMA
     while(actualRam < desiredRam){
-        //Creacion de un programa con singularidades
+        //Creacion de un programa con singularidades (es un if con operador ternario)
+        wasBought = ns.getServerMoneyAvailable("home") >= ns.singularity.getUpgradeHomeRamCost() ? ns.singularity.upgradeHomeRam() : false;
 
         //Evaluacion de si se ha comprado o no
-        if(wasBought){
-            actualRam = ns.getServerMaxRam("home");
-        }
+        if(wasBought) actualRam = ns.getServerMaxRam("home");
 
         await ns.sleep(100);
     }

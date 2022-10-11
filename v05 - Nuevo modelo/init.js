@@ -14,7 +14,7 @@ export async function main(ns) {
     /************Programa*************/
 
     //Inicio de programas basicos (32 GB de limite)
-    //Tengo que hacer "inteligentes" a los programas
+	ns.run("hacknet.js");	//Este es el basico necesario si o si para empezar a generar dinero
 
     /*Archivo antiguo
 
