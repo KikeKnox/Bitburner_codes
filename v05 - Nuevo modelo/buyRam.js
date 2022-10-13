@@ -17,4 +17,5 @@ export async function main(ns) {
 
         await ns.sleep(100);
     }
+    ns.alert("Se ha aumentado la RAM a " + actualRam);
 }
