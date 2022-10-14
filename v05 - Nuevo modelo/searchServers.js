@@ -1,20 +1,14 @@
 /** @param {NS} ns */
 export async function main(ns) {
     //Archivo para escanear y sacar los servidores
-	var servis = [["home"]];
-	var isBcDr = [[true]];
-	var hcklvl = [[0]];
-	var cont = [0, 0];
-	var serTemp;
-	var lvlObjetive = 800000000000000;
-	var objetive = [0, 0];
-	var notBcDr = 0;
-	var totalServers = 1;
-	var allBcDr = false;
-	var path = [];
+	let servis = [["home"]];
+	let isBcDr = [[true]];
+	let hcklvl = [[0]];
+	let cont = [0, 0];
+	let serTemp;
+	let notBcDr = 0;
+	let totalServers = 1;
 
-	//log
-	ns.tail("backdoor.js");
 
 	//Creacion de arrays inicial
 	//Analisis de servidores en matricial
@@ -31,23 +25,15 @@ export async function main(ns) {
 			hcklvl[cont[0]][cont[1]] = ns.getServerRequiredHackingLevel(servis[cont[0]][cont[1]]);
 
 			//Si no tiene backdoor se anade a la lista
-			if (!isBcDr[cont[0]][cont[1]]) {
-				notBcDr++;
-				//Si ademas es inferior al nivel objetivo de ataque guardado actualmente, se actualiza el objetivo
-				if (hcklvl[cont[0]][cont[1]] < lvlObjetive) {
-					lvlObjetive = hcklvl[cont[0]][cont[1]];
-					objetive[0] = cont[0];
-					objetive[1] = cont[1];
-				}
-			}
+			if (!isBcDr[cont[0]][cont[1]]) notBcDr++;
 
 			//Analizar lo escaneado para ver si se puede agregar
-			var r = 0;
+			let r = 0;
 			while (r < serTemp.length) {
 				if (serTemp[r].substr(0, 7) == "Server_" || serTemp[r] == "darkweb") {
 					serTemp.splice(r, 1);
 				} else {
-					for (var z = 0; z <= cont[0] + 1; z++) {
+					for (let z = 0; z <= cont[0] + 1; z++) {
 						if (servis[z].indexOf(serTemp[r]) != -1) {
 							serTemp.splice(r, 1);
 						}
@@ -56,7 +42,7 @@ export async function main(ns) {
 				}
 			}
 			if (serTemp.length > 0) {
-				for (var z = 0; z < serTemp.length; z++) {
+				for (let z = 0; z < serTemp.length; z++) {
 					servis[cont[0] + 1].push(serTemp[z]);
 					totalServers++;
 				}
