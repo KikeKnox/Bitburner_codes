@@ -6,7 +6,6 @@ export async function main(ns) {
 	let hcklvl = [[0]];
 	let cont = [0, 0];
 	let serTemp;
-	let notBcDr = 0;
 	let totalServers = 1;
 
 
@@ -66,8 +65,15 @@ export async function main(ns) {
 }
 
 export async function mtx2Port(mtx, puerto){
-	//Funcion exportadora al puerto que se desea
+	//Funcion exportadora de matrices al puerto que se desea
+	let cont = [0, 0];
+	let sal ="";
 
+	for(cont[0] = 0;cont<mtx.length;cont[0]++){
+		for(cont[1]=0;cont<mtx[cont[0]].length;cont[1]++){
+			
+		}
+	}
 
 	return 0;
 }
