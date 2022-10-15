@@ -16,13 +16,17 @@ export async function main(ns) {
 		//Se crea la linea siguiente vacia para rellenar
 		servis[cont[0] + 1] = [];
 		isBcDr[cont[0] + 1] = [];
-		hcklvl[cont[0] + 1] = [];
+		hckLvl[cont[0] + 1] = [];
+		isNuked[cont[0] + 1] = [];
+		nmbPort[cont[0] + 1] = [];
 		//Recorrer las columnas
 		for (cont[1] = 0; cont[1] < servis[cont[0]].length; cont[1]++) {
 			//Escanear cada servidor
 			serTemp = ns.scan(servis[cont[0]][cont[1]]);
 			isBcDr[cont[0]][cont[1]] = ns.getServer(servis[cont[0]][cont[1]]).backdoorInstalled;
 			hcklvl[cont[0]][cont[1]] = ns.getServerRequiredHackingLevel(servis[cont[0]][cont[1]]);
+			isNuked[cont[0]][cont[1]] = ns.getServer(servis[cont[0]][cont[1]]).hasAdminRights;
+			nmbPort[cont[0]][cont[1]] = ns.getServer(servis[cont[0]][cont[1]]).numOpenPortsRequired;
 
 			//Si no tiene backdoor se anade a la lista
 			if (!isBcDr[cont[0]][cont[1]]) notBcDr++;
@@ -58,5 +62,12 @@ export async function main(ns) {
 			servis.splice(servis.length - 1, 1);
 		}
 	}
+	mtx2Port()
+}
 
+export async function mtx2Port(mtx, puerto){
+	//Funcion exportadora al puerto que se desea
+
+
+	return 0;
 }
