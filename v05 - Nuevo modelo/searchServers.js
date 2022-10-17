@@ -61,19 +61,41 @@ export async function main(ns) {
 			servis.splice(servis.length - 1, 1);
 		}
 	}
-	mtx2Port()
 }
 
 export async function mtx2Port(mtx, puerto){
 	//Funcion exportadora de matrices al puerto que se desea
-	let cont = [0, 0];
-	let sal ="";
+	//Se construye un string gigante con todos los elementos
 
+	//Variables
+	let cont = [0, 0];
+	let sal = "";
+
+	//Programa
+	ns.clearPort(puerto);	//Primero se limpia el puerto
 	for(cont[0] = 0;cont<mtx.length;cont[0]++){
 		for(cont[1]=0;cont<mtx[cont[0]].length;cont[1]++){
-			
+			sal = sal + mtx[cont[0]][cont[1]] + ";";	//Para cada columna se separa con ;
 		}
+		sal = sal + "@;";	//Caracter para indicar un cambio de linea
 	}
 
+	ns.writePort(puerto, sal);	//Se escriben los datos
+
 	return 0;
+}
+
+export async function port2Mtx(puerto){
+	//Funcio de lectura de puerto a matriz
+	//Se deshace el string creado en la funcion mtx2Port
+
+	//Variables
+	let mtx = [[]];
+	let ent = ns.readPort(puerto);
+
+	//Programa
+	ent
+
+	return mtx;
+	
 }
