@@ -29,11 +29,22 @@ export function port2Mtx(puerto){
 	//Se deshace el string creado en la funcion mtx2Port
 
 	//Variables
-	let mtx = [[]];
+	let mtx = [];
 	let ent = ns.readPort(puerto);
+    let cont,
+    let pos;
 
 	//Programa
-	ent
+	pos = allCoincidences(ent,"@;");
+    if(pos==-1){
+        //En caso de -1 es que no encuentra el tag separador de filas, ergo no es una matriz
+        return -1;
+    }
+    mtx[cont[0]] = [];
+    for(cont[0] = 0;cont[0]<pos.length;cont[0]++){
+        mtx[cont[0] + 1] = [];
+
+    }
 
 	return mtx;
 	
