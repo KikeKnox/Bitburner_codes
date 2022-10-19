@@ -31,7 +31,7 @@ export function port2Mtx(puerto){
 	//Variables
 	let mtx = [];
 	let ent = ns.readPort(puerto);
-    let cont,
+    let cont;
     let pos;
 
 	//Programa
