@@ -14,9 +14,11 @@ export function mtx2Port(mtx, puerto){
 	ns.clearPort(puerto);	//Primero se limpia el puerto
 	for(cont[0] = 0;cont<mtx.length;cont[0]++){
 		for(cont[1]=0;cont<mtx[cont[0]].length;cont[1]++){
-			sal = sal + mtx[cont[0]][cont[1]] + ";";	//Para cada columna se separa con ;
+			sal += mtx[cont[0]][cont[1]] + ";";	//Para cada columna se separa con ;
 		}
-		sal = sal + "@;";	//Caracter para indicar un cambio de linea
+        if(cont[0] < mtx.length - 1){
+            sal += "@;";	//Caracter para indicar un cambio de linea
+        }
 	}
 
 	ns.writePort(puerto, sal);	//Se escriben los datos
@@ -33,6 +35,7 @@ export function port2Mtx(puerto){
 	let ent = ns.readPort(puerto);
     let cont;
     let pos;
+    let temp;
 
 	//Programa
 	pos = allCoincidences(ent,"@;");
@@ -40,14 +43,13 @@ export function port2Mtx(puerto){
         //En caso de -1 es que no encuentra el tag separador de filas, ergo no es una matriz
         return -1;
     }
-    mtx[cont[0]] = [];
+    mtx[0] = [];
     for(cont[0] = 0;cont[0]<pos.length;cont[0]++){
+        temp = left(ent,pos[cont[0]]);
         mtx[cont[0] + 1] = [];
-
     }
 
 	return mtx;
-	
 }
 
 export function allCoincidences(texto, subcad){
@@ -77,4 +79,26 @@ export function allCoincidences(texto, subcad){
     }
     return pos;
 
+}
+
+export function left(str,pos){
+    //Funcion para sacar el izquierdo de una cadena a partir de una posicion
+    let sal = "";
+
+    for(let cont = 0;cont<pos;cont++){
+        sal += str[cont];
+    }
+    
+    return sal;
+}
+
+export function right(str,pos){
+    //Funcion para sacar el derecho de una cadena a partir de una posicion
+    let sal = "";
+
+    for(let cont = pos;cont<str.length;cont++){
+        sal += str[cont];
+    }
+    
+    return sal;
 }
