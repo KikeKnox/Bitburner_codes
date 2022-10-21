@@ -12,12 +12,12 @@ export function mtx2Port(mtx, puerto){
 
 	//Programa
 	ns.clearPort(puerto);	//Primero se limpia el puerto
-	for(cont[0] = 0;cont<mtx.length;cont[0]++){
-		for(cont[1]=0;cont<mtx[cont[0]].length;cont[1]++){
+	for(cont[0] = 0;cont[0]<mtx.length;cont[0]++){
+		for(cont[1]=0;cont[1]<mtx[cont[0]].length;cont[1]++){
 			sal += mtx[cont[0]][cont[1]] + ";";	//Para cada columna se separa con ;
 		}
         if(cont[0] < mtx.length - 1){
-            sal += "@;";	//Caracter para indicar un cambio de linea
+            sal += "@:";	//Caracter para indicar un cambio de linea
         }
 	}
 
@@ -27,26 +27,35 @@ export function mtx2Port(mtx, puerto){
 }
 
 export function port2Mtx(puerto){
-	//Funcio de lectura de puerto a matriz
-	//Se deshace el string creado en la funcion mtx2Port
+	//Funcion de lectura de puerto a matriz
+	//Se deshace el string creado en la funcion mtx2Port o cualquier otro que
+    //siga el patron designado
 
 	//Variables
 	let mtx = [];
-	let ent = ns.readPort(puerto);
-    let cont;
+	let ent = ns.peek(puerto);
+    let cont = [0, 0];
     let pos;
-    let temp;
 
 	//Programa
-	pos = allCoincidences(ent,"@;");
+	pos = allCoincidences(ent,";");
     if(pos==-1){
-        //En caso de -1 es que no encuentra el tag separador de filas, ergo no es una matriz
+        //En caso de -1 es que no encuentra el tag separador de elementos
         return -1;
     }
     mtx[0] = [];
     for(cont[0] = 0;cont[0]<pos.length;cont[0]++){
-        temp = left(ent,pos[cont[0]]);
-        mtx[cont[0] + 1] = [];
+        //El primer ; define el elemento
+        mtx[cont[1]].push(left(ent,ent.indexOf(";")));
+
+        //Lo que queda de la cadena se almacena
+        ent = right(ent,ent.indexOf(";")+1);
+        if(ent.indexOf("@:")==0){
+            //Se llego al cambio de linea
+            cont[1]++;
+            mtx[cont[1]]=[];
+            ent = right(ent,ent.indexOf("@:")+2);
+        }
     }
 
 	return mtx;
