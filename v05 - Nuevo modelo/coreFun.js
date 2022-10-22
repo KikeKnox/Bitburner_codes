@@ -2,7 +2,7 @@
 
 //Archivo de funciones generales
 
-export function mtx2Port(mtx, puerto){
+export function mtx2Port(ns, mtx, puerto){
 	//Funcion exportadora de matrices al puerto que se desea
 	//Se construye un string gigante con todos los elementos
 
@@ -26,7 +26,7 @@ export function mtx2Port(mtx, puerto){
 	return 0;
 }
 
-export function port2Mtx(puerto){
+export function port2Mtx(ns, puerto){
 	//Funcion de lectura de puerto a matriz
 	//Se deshace el string creado en la funcion mtx2Port o cualquier otro que
     //siga el patron designado
