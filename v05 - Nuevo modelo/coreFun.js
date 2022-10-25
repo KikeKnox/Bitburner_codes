@@ -111,3 +111,14 @@ export function right(str,pos){
     
     return sal;
 }
+
+export function nxtMin(arr, valor){
+    //Funcion para obtener el valor minimo a partir de otro dado. Si valor == indefined se considera -Inf
+
+    if(valor == undefined)valor = -Infinity;
+    let min = Infinity;
+    for(let cont = 0;con<arr.length;cont++){
+        if(arr[cont]<min && arr[cont]>valor)min = arr[cont];
+    }
+    return min;
+}

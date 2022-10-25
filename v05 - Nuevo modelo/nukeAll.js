@@ -15,5 +15,7 @@ export async function main(ns) {
     //Programa
     while(!allNuked){
         //Seccion de analisis de programas
+
+        
     }
 }
