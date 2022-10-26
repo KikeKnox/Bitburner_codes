@@ -115,10 +115,35 @@ export function right(str,pos){
 export function nxtMin(arr, valor){
     //Funcion para obtener el valor minimo a partir de otro dado. Si valor == indefined se considera -Inf
 
+    //Analisis de entradas
+    if(arr == undefined)return "No array introduced";
     if(valor == undefined)valor = -Infinity;
+
+    //Variables
     let min = Infinity;
-    for(let cont = 0;con<arr.length;cont++){
+
+    //Programa
+    for(let cont = 0;cont<arr.length;cont++){
         if(arr[cont]<min && arr[cont]>valor)min = arr[cont];
     }
     return min;
+}
+
+export function nmbOfCoincidences(arr, valor, bol){
+    //Funcion para sacar el numero de coincidencias en un array o sus posiciones
+
+    //Analisis de entradas
+    if(arr == undefined)return "No array introduced";
+    if(valor == undefined)return "No value to compare introduced";
+    if(bol == undefined)bol = true;
+
+    //Variables
+    let idx = [];
+
+    //Programa
+    for(let cont = 0;cont<arr.length;cont++){
+        if(arr[cont]==valor)idx.push(cont);
+    }
+    if(bol)return idx.length;
+    else return idx;
 }
