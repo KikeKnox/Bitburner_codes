@@ -1,13 +1,17 @@
 /** @param {NS} ns */
 export async function main(ns) {
 	// Codigo para aumentar la produccion de la hacknet
+  const maxServers = 30;
+
+  let flgLoop = true;
 	var costServ;
 	var numServ;
 	var n;
 	var cheaperNode = -1;
 	var min;
 	var dineros;
-	while(true){
+	
+	while(flgLoop){
 		dineros = ns.getServerMoneyAvailable('home');
 		cheaperNode = -1;
 		numServ = ns.hacknet.numNodes();
@@ -28,9 +32,7 @@ export async function main(ns) {
 			}
 		}
 		if(dineros > min){
-			if(cheaperNode == -1){
-				ns.hacknet.purchaseNode();
-			} else {
+			if(cheaperNode != -1 ){
 				if(min == ns.hacknet.getLevelUpgradeCost(cheaperNode)){
 					ns.hacknet.upgradeLevel(cheaperNode);
 				} else if(min == ns.hacknet.getRamUpgradeCost(cheaperNode)){
@@ -38,9 +40,12 @@ export async function main(ns) {
 				} else if(min == ns.hacknet.getCoreUpgradeCost(cheaperNode)){
 					ns.hacknet.upgradeCore(cheaperNode);
 				}
-			}
+			} else if(numServ <= maxServers) {
+        		ns.hacknet.purchaseNode();
+      		} else {
+        		flgLoop = false;
+      		}
 		}
-
 		await ns.sleep(250);
 	}
 }
