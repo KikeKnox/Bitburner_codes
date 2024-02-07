@@ -1,9 +1,9 @@
 /** @param {NS} ns */
 export async function main(ns) {
 	// Codigo para aumentar la produccion de la hacknet
-  const maxServers = 30;
+	const maxServers = 30;
 
-  let flgLoop = true;
+	let flgLoop = true;
 	var costServ;
 	var numServ;
 	var n;
