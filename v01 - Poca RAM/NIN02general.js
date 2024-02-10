@@ -20,7 +20,7 @@ export async function main(ns) {
 	var serTemp;
 	var i = 0;
 	var n;
-	var cod = await ns.read("hacked.js");
+	var cod = ns.read("hacked.js");
   
 	//Creacion de arrays inicial
 	while (!flg) {
@@ -103,17 +103,18 @@ export async function main(ns) {
 			  ns.nuke(servis[n]);
 			  isNuked[n] = true;
 			  if (ns.getServerMaxMoney(servis[n]) > 0) {
-				if (ns.getServerSecurityLevel(servis[n]) > 0 && ns.getServerMaxRam(servis[n]) > 0) {
+				if (ns.getServerMaxRam(servis[n]) > 0) {
 				  //Por ahora los que no tienen ram no los voy a hackear. Mas adelante lo hare en local
-				  await ns.scp("hacked.js", servis[n]);
+				  ns.scp("hacked.js", servis[n]);
 				  ns.exec("hacked.js", servis[n], "1", servis[n]);
 				}
-				else if (ns.getServerMaxRam(servis[n]) == 0) {
+				else {
+				  let name = servis[n] + ".js"
 				  if (!ns.fileExists(servis[n] + ".js")) {
 					//Si tiene RAM 0 y no existe el archivo
-					await ns.write(servis[n] + ".js", cod, "w");
+					ns.write(name, cod, "w");
 				  }
-				  ns.exec(servis[n] + ".js", "home", 1, servis[n]);
+				  ns.exec(name, "home", 1, servis[n]);
 				}
 			  }
 			}
