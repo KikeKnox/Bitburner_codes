@@ -1,155 +1,79 @@
 /** @param {NS} ns */
 export async function main(ns) {
-	//VARIABLES
-	var servis = ["home"];
-	var isHacked = [true];
-	var isNuked = [true];
-	var numPorts = [5];
-	var reqHackLvl = [0];
-	var numPrograms = 0;
-	var numPrograms_ant = -1;
-	var flg = false;
-	var allIsHacked = false;
-	var allNuked = false;
-	var brutExist = false;
-	var ftpExist = false;
-	var relaExist = false;
-	var httpExist = false;
-	var sqlExist = false;
-	var plyHack = 0;
-	var serTemp;
-	var i = 0;
-	var n;
-	var cod = ns.read("hacked.js");
-  
-	//Creacion de arrays inicial
-	while (!flg) {
-	  //Escaneo desde el server
-	  serTemp = ns.scan(servis[i]);
-  
-	  //Recorrer el array obtenido entero
-	  for (n = 0; n < serTemp.length; n++) {
-		if (servis.indexOf(serTemp[n]) == -1) {
-		  //Si el nombre del servidor no esta guardado en el array, se anade
-		  servis.push(serTemp[n]);
-		  isHacked.push(false);
-		  isNuked.push(ns.hasRootAccess(serTemp[n]));
-		  numPorts.push(ns.getServerNumPortsRequired(serTemp[n]));
-		  reqHackLvl.push(ns.getServerRequiredHackingLevel(serTemp[n]));
-		}
-	  }
-	  //Determinar si se sigue con el siguiente o se acaba
-	  if (i < servis.length - 1) {
-		i++;
-	  } else {
-		flg = true;
-	  }
-	}
-  
-	ns.tprint("Servidores encontrados: " + servis.length);
-  
-	//BUCLE DE EJECUCION CONTINUA
-	while (!allIsHacked) {
-	  //setup del bucle
-	  allIsHacked = true;
-	  numPrograms = 0;
-	  plyHack = ns.getHackingLevel();
-  
-	  //Seccion de nukeo
-	  if (!allNuked) {
-		//Primero se comprueba si hay algun programa nuevo
-		if (ns.fileExists("BruteSSH.exe", "home")) {
-		  numPrograms++;
-		  brutExist = true;
-		}
-		if (ns.fileExists("FTPCrack.exe", "home")) {
-		  numPrograms++;
-		  ftpExist = true;
-		}
-		if (ns.fileExists("relaySMTP.exe", "home")) {
-		  numPrograms++;
-		  relaExist = true;
-		}
-		if (ns.fileExists("HTTPWorm.exe", "home")) {
-		  numPrograms++;
-		  httpExist = true;
-		}
-		if (ns.fileExists("SQLInject.exe", "home")) {
-		  numPrograms++;
-		  sqlExist = true;
-		}
-  
-		//En caso de que se tenga mas programas que antes se pasa un bucle de nukeo
-		if (numPrograms != numPrograms_ant) {
-		  ns.tprint("Detectados nuevos archivos. Iniciando nukeo");
-		  for (n = 1; n < isNuked.length; n++) {
-			if (numPrograms >= numPorts[n] && !isNuked[n]) {
-			  ns.tprint("Servidor a nukear: " + servis[n]);
-			  if (brutExist) {
-				ns.brutessh(servis[n]);
-			  }
-			  if (ftpExist) {
-				ns.ftpcrack(servis[n]);
-			  }
-			  if (relaExist) {
-				ns.relaysmtp(servis[n]);
-			  }
-			  if (httpExist) {
-				ns.httpworm(servis[n]);
-			  }
-			  if (sqlExist) {
-				ns.sqlinject(servis[n]);
-			  }
-			  ns.nuke(servis[n]);
-			  isNuked[n] = true;
-			  if (ns.getServerMaxMoney(servis[n]) > 0) {
-				if (ns.getServerMaxRam(servis[n]) > 0) {
-				  //Por ahora los que no tienen ram no los voy a hackear. Mas adelante lo hare en local
-				  ns.scp("hacked.js", servis[n]);
-				  ns.exec("hacked.js", servis[n], "1", servis[n]);
-				}
-				else {
-				  let name = servis[n] + ".js"
-				  if (!ns.fileExists(servis[n] + ".js")) {
-					//Si tiene RAM 0 y no existe el archivo
-					ns.write(name, cod, "w");
-				  }
-				  ns.exec(name, "home", 1, servis[n]);
-				}
-			  }
-			}
-		  }
-		}
-	  }
-  
-	  //Seccion de hack
-	  for (n = 0; n < isHacked.length; n++) {
-		if (!isHacked[n] && plyHack >= reqHackLvl[n] && isNuked[n]) {
-		  ;
-		  if (ns.getServerMaxMoney(servis[n]) == 0) {
-			//Los servidores de facciones no tienen dinero
-			isHacked[n] = true;
-		  } else if (ns.getServerMaxRam(servis[n]) > 0) {
-			//Por ahora los que no tienen ram no los voy a hackear. Mas adelante lo hare en local
-			await ns.scp("hacked.js", servis[n]);
-			ns.exec("hacked.js", servis[n], "1", servis[n]);
-		  }
-		}
-	  }
-	  //Actualizar los anteriores para la siguiente pasada
-	  numPrograms_ant = numPrograms;
-  
-	  //Final del bucle: comprobar si se acaba el programa
-	  for (n = 0; n < isHacked.length; n++) {
-		if (!isHacked[n]) {
-		  //Si hay alguno no hackeado, no se acaba el programa
-		  allIsHacked = false;
-		  if (!isNuked[n]) {
-			//Si ademas no esta nukeado se sigue con la parte de nukeos
-			allNuked = false;
-		  }
-		}
-	  }
-	  await ns.sleep(10);
-	}
+  //VARIABLES
+  let servisString = new Set(["home"]);
+  let servis = [ns.getServer("home")];
+  let crs = crsLocal = 1;
+  let numPrograms = 0;
+  let numPrograms_ant = -1;
+  let allNuked = false;
+  let programs = {
+      "BruteSSH.exe": { exists: false, method: ns.brutessh },
+      "FTPCrack.exe": { exists: false, method: ns.ftpcrack },
+      "relaySMTP.exe": { exists: false, method: ns.relaysmtp },
+      "HTTPWorm.exe": { exists: false, method: ns.httpworm },
+      "SQLInject.exe": { exists: false, method: ns.sqlinject }
+  };
+  let cod = ns.read("hacked.js");
+
+  //Creacion de arrays inicial
+  let i = 0;
+  while (i < servisString.size) {
+      let serTemp = ns.scan(Array.from(servisString)[i]);
+      serTemp.forEach(server => servisString.add(server));
+      i++;
   }
+
+  ns.tprint("Servidores encontrados: " + servisString.size);
+
+  Array.from(servisString).slice(1).forEach(server => servis.push(ns.getServer(server)));
+
+  // Check for new programs once before the loop
+  for (let program in programs) {
+      if (ns.fileExists(program, "home")) {
+          numPrograms++;
+          programs[program].exists = true;
+      }
+  }
+
+  //BUCLE DE EJECUCION CONTINUA
+  while (!allNuked) {
+      //En caso de que se tenga mas programas que antes se pasa un bucle de nukeo
+      if (numPrograms != numPrograms_ant) {
+          ns.tprint("Detectados nuevos archivos. Iniciando nukeo");
+          for (let n = 1; n < servis.length; n++) {
+              if (numPrograms >= servis[n].numOpenPortsRequired && !servis[n].hasAdminRights) {
+                  ns.tprint("Servidor a nukear: " + servis[n].hostname);
+                  for (let program in programs) {
+                      if (programs[program].exists) {
+                          programs[program].method(servis[n].hostname);
+                      }
+                  }
+                  ns.nuke(servis[n].hostname);
+                  if (servis[n].moneyMax > 0) {
+                      if (servis[n].maxRam > 0) {
+                          ns.scp("hacked.js", servis[n]);
+                          crs = Math.floor((servis[n].maxRam - servis[n].ramUsed) / ns.getScriptRam("hacked.js", servis[n].hostname));
+                          ns.exec("hacked.js", servis[n], crs, servis[n]);
+                      }
+                      let name = "/codes/" + servis[n] + ".js"
+                      if (!ns.fileExists(name)) {
+                          ns.write(name, cod, "w");
+                      }
+                      let costRAMAllServs = Math.floor(servis[0].maxRam / (ns.getScriptRam("hacked.js") * (servis.length - 1)));
+                      crsLocal = (costRAMAllServs < servis[0].cpuCores) ? costRAMAllServs : servis[0].cpuCores;
+                      ns.exec(name, "home", 1, [servis[n], crsLocal]);
+                  }
+              }
+          }
+      }
+
+      //Actualizar los anteriores para la siguiente pasada
+      numPrograms_ant = numPrograms;
+
+      //Final del bucle: comprobar si se acaba el programa
+      allNuked = servis.every(server => server.hasAdminRights);
+
+      await ns.sleep(10);
+  }
+}
