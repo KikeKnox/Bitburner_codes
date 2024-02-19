@@ -9,7 +9,7 @@ export async function main(ns) {
     let securityThresh = ns.getServerMinSecurityLevel(target) + 2;
     let securityLevel = ns.getServerRequiredHackingLevel(target);
     while (true) {
-      if (securityLevel > ns.getHackingLevel()) {
+      if (securityLevel > ns.getHackingLevel() || !ns.hasRootAccess(target)) {
         await ns.sleep(1000);
         continue;
       }

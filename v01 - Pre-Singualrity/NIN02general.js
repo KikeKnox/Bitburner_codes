@@ -3,8 +3,6 @@ export async function main(ns) {
   //VARIABLES
   let servisString = new Set(["home"]);
   let servis = [ns.getServer("home")];
-  let crs = 1;
-  let crsLocal = 1;
   let numPrograms = 0;
   let numPrograms_ant = -1;
   let allNuked = false;
@@ -15,7 +13,6 @@ export async function main(ns) {
     "HTTPWorm.exe": { exists: false, method: ns.httpworm },
     "SQLInject.exe": { exists: false, method: ns.sqlinject }
   };
-  let cod = ns.read("hacked.js");
 
   //Creacion de arrays inicial
   let i = 0;
@@ -41,7 +38,6 @@ export async function main(ns) {
     }
     //En caso de que se tenga mas programas que antes se pasa un bucle de nukeo
     if (numPrograms != numPrograms_ant) {
-      ns.tprint("Detectados nuevos archivos. Iniciando nukeo");
       for (let n = 1; n < servis.length; n++) {
         if (numPrograms >= servis[n].numOpenPortsRequired && !servis[n].hasAdminRights) {
           ns.tprint("Servidor a nukear: " + servis[n].hostname);
@@ -51,24 +47,9 @@ export async function main(ns) {
             }
           }
           ns.nuke(servis[n].hostname);
-          if (servis[n].moneyMax > 0) {
-            if (servis[n].maxRam > 0) {
-              ns.scp("hacked.js", servis[n].hostname);
-              crs = Math.floor((servis[n].maxRam - servis[n].ramUsed) / ns.getScriptRam("hacked.js", servis[n].hostname));
-              for (let n = 1; n < crs; n++) {
-                ns.exec("hacked.js", servis[n].hostname, 1, servis[n].hostname);
-              }
-            }
-            let name = "/codes/" + servis[n].hostname + ".js"
-            if (!ns.fileExists(name)) {
-              ns.write(name, cod, "w");
-            }
-            let costRAMAllServs = Math.floor(servis[0].maxRam / (ns.getScriptRam("hacked.js") * (servis.length - 1)));
-            crsLocal = (costRAMAllServs < servis[0].cpuCores) ? costRAMAllServs : servis[0].cpuCores;
-            ns.exec(name, "home", crsLocal, servis[n].hostname, crsLocal);
-          }
         }
       }
+      checkHackPrograms(ns, servis);
     }
 
     //Actualizar los anteriores para la siguiente pasada
@@ -80,16 +61,32 @@ export async function main(ns) {
     await ns.sleep(10);
   }
   //Some times I kill the scripts and is needed to run again
-  let proccess = ns.ps("home");
-  if(!proccess.some(p => p.filename.startsWith("/codes/"))){
-    ns.tprint(`No se detectan algunos scripts. Rearrancando...`)
-    for(let servidor of servis){
-      if(servidor.moneyMax > 0){
-        let name = "/codes/" + servidor.hostname + ".js"
-        let costRAMAllServs = Math.floor(servis[0].maxRam / (ns.getScriptRam("hacked.js") * (servis.length - 1)));
-        crsLocal = (costRAMAllServs < servis[0].cpuCores) ? costRAMAllServs : servis[0].cpuCores;
-        ns.exec(name, "home", crsLocal, servidor.hostname, crsLocal);
+  checkHackPrograms(ns, servis);
+}
+
+export async function checkHackPrograms(ns, servers) {
+  let prename = "codes/";
+  let crs = 1;
+  let crsLocal = 1;
+  let hackScript = "hacked.js";
+  let cod = ns.read(hackScript);
+  let localProcess = ns.ps("home");
+
+  for (let server of servers) {
+    if (server.moneyMax > 0) {
+      if (server.maxRam > 0) {
+        if (!ns.fileExists(hackScript, server.hostname)) ns.scp(hackScript, server.hostname);
+        crs = Math.floor((server.maxRam - server.ramUsed) / ns.getScriptRam(hackScript, server.hostname));
+        for (let n = 0; n < crs; n++) {
+          ns.exec(hackScript, server.hostname, 1, server.hostname);
+        }
       }
+      let name = prename + server.hostname + ".js"
+      if (localProcess.some(p => p.filename == name)) continue;
+      if (!ns.fileExists(name)) ns.write(name, cod, "w");
+      let costRAMAllServs = Math.floor(servers[0].maxRam / (ns.getScriptRam(hackScript) * (servers.length - 1)));
+      crsLocal = (costRAMAllServs < servers[0].cpuCores) ? costRAMAllServs : servers[0].cpuCores;
+      ns.exec(name, "home", crsLocal, server.hostname, crsLocal);
     }
   }
 }
