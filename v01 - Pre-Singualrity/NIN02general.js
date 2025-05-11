@@ -33,7 +33,7 @@ export async function main(ns) {
     for (let program in programs) {
       if (ns.fileExists(program, "home")) {
         numPrograms++;
-        programs[program].exists = true;
+        programs[program].exists = true;  // programs es una especie de diccionario, entonces program es solo la clave y por eso hay que utilizar el arreglo entero
       }
     }
     //En caso de que se tenga mas programas que antes se pasa un bucle de nukeo
